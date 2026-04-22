@@ -1,0 +1,6 @@
+{
+  "name": "Hotel Room Tracker",
+  "description": "Ứng dụng theo dõi bán phòng khách sạn với 8 phòng, cho phép quản lý đặt phòng theo ngày, tính tổng tiền và phân loại khách hàng bằng màu sắc.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}

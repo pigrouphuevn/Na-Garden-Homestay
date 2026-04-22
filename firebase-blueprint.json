@@ -1,0 +1,27 @@
+{
+  "entities": {
+    "Booking": {
+      "title": "Booking",
+      "description": "Details of a room booking for a specific date",
+      "type": "object",
+      "properties": {
+        "guestName": { "type": "string" },
+        "channel": { "type": "string" },
+        "price": { "type": "number" },
+        "deposit": { "type": "number" },
+        "phone": { "type": "string" },
+        "arrivalTime": { "type": "string" },
+        "color": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "roomId": { "type": "string" }
+      },
+      "required": ["guestName", "date", "roomId"]
+    }
+  },
+  "firestore": {
+    "/bookings/{bookingId}": {
+      "schema": "Booking",
+      "description": "Specific booking for a room on a given date"
+    }
+  }
+}

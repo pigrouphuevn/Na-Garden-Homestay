@@ -1,0 +1,46 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helpers
+    function isSignedIn() { return request.auth != null; }
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+
+    // Validation for Booking
+    function isValidBooking(data) {
+      return data.keys().hasAll(['guestName', 'date', 'roomId']) 
+        && data.guestName is string && data.guestName.size() > 0 && data.guestName.size() <= 200
+        && data.date is string && data.date.matches('^\\d{4}-\\d{2}-\\d{2}$')
+        && data.roomId is string && data.roomId.size() <= 100
+        && (data.get('price', 0) is number && data.get('price', 0) >= 0)
+        && (data.get('deposit', 0) is number && data.get('deposit', 0) >= 0)
+        && (data.get('channel', '') is string && data.get('channel', '').size() <= 100)
+        && (data.get('phone', '') is string && data.get('phone', '').size() <= 50)
+        && (data.get('arrivalTime', '') is string && data.get('arrivalTime', '').size() <= 100)
+        && (data.get('color', '') is string && data.get('color', '').size() <= 100);
+    }
+
+    match /bookings/{bookingId} {
+      allow list, get: if isSignedIn();
+      
+      allow create: if isSignedIn() 
+        && isValidId(bookingId) 
+        && isValidBooking(incoming())
+        && incoming().keys().size() <= 10; // Extra field for roomId, date, etc.
+        
+      allow update: if isSignedIn() 
+        && isValidBooking(incoming())
+        && (incoming().date == existing().date)
+        && (incoming().roomId == existing().roomId)
+        && incoming().keys().size() <= 12; // Allow metadata like updatedAt
+        
+      allow delete: if isSignedIn();
+    }
+  }
+}
