@@ -26,19 +26,28 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # 1. Cài đặt Node.js để có thể chạy lệnh npm
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v4
 
-      # Bước này giúp bạn kiểm tra xem file index.html nằm ở đâu nếu vẫn lỗi
-      - name: Debug Folder Structure
-        run: ls -R
+      # 2. VỊ TRÍ MỚI: Cài đặt thư viện và Build dự án
+      - name: Install and Build
+        run: |
+          npm install
+          npm run build
 
+      # 3. CẬP NHẬT PATH: Upload thư mục sau khi build (thường là dist hoặc build)
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Thử đổi từ './public' thành '.' (thư mục gốc) 
-          # vì lỗi 'exit code 2' thường do không tìm thấy thư mục 'public'
-          path: '.' 
+          # Kiểm tra lại: nếu dùng Vite thì là './dist', nếu là React cũ thì là './build'
+          path: './dist' 
 
       - name: Deploy to GitHub Pages
         id: deployment
