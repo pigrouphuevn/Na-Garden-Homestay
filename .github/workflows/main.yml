@@ -4,13 +4,16 @@ on:
   push:
     branches: [ "main" ]
 
-# Cho phép GITHUB_TOKEN triển khai tới GitHub Pages
+# Ép hệ thống sử dụng Node.js 24 để loại bỏ cảnh báo deprecation
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Đảm bảo chỉ có một lần triển khai diễn ra tại một thời điểm
+# Đảm bảo chỉ có một luồng triển khai chạy tại một thời điểm
 concurrency:
   group: "pages"
   cancel-in-progress: true
@@ -22,16 +25,16 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Pages
+      - name: Setup GitHub Pages
         uses: actions/configure-pages@v4
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Đã xóa dấu "." dư thừa ở cuối dòng path
+          # Đường dẫn tới thư mục chứa tệp tĩnh của bạn (ví dụ: index.html)
           path: './public'
 
       - name: Deploy to GitHub Pages
