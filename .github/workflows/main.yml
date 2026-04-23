@@ -4,26 +4,36 @@ on:
   push:
     branches: [ "main" ]
 
+# Cho phép GITHUB_TOKEN triển khai tới GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
+# Đảm bảo chỉ có một lần triển khai diễn ra tại một thời điểm
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
 jobs:
   deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
-        
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          enablement: true
-          path: './public' .
-          
+          # Đã xóa dấu "." dư thừa ở cuối dòng path
+          path: './public'
+
       - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4
