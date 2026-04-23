@@ -4,7 +4,6 @@ on:
   push:
     branches: [ "main" ]
 
-# Ép hệ thống sử dụng Node.js 24 để loại bỏ cảnh báo deprecation
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
@@ -13,7 +12,6 @@ permissions:
   pages: write
   id-token: write
 
-# Đảm bảo chỉ có một luồng triển khai chạy tại một thời điểm
 concurrency:
   group: "pages"
   cancel-in-progress: true
@@ -31,11 +29,16 @@ jobs:
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v4
 
+      # Bước này giúp bạn kiểm tra xem file index.html nằm ở đâu nếu vẫn lỗi
+      - name: Debug Folder Structure
+        run: ls -R
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Đường dẫn tới thư mục chứa tệp tĩnh của bạn (ví dụ: index.html)
-          path: './public'
+          # Thử đổi từ './public' thành '.' (thư mục gốc) 
+          # vì lỗi 'exit code 2' thường do không tìm thấy thư mục 'public'
+          path: '.' 
 
       - name: Deploy to GitHub Pages
         id: deployment
