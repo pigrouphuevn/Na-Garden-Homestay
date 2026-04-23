@@ -26,28 +26,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 1. Cài đặt Node.js để có thể chạy lệnh npm
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm'
 
-      - name: Setup GitHub Pages
-        uses: actions/configure-pages@v4
-
-      # 2. VỊ TRÍ MỚI: Cài đặt thư viện và Build dự án
       - name: Install and Build
         run: |
           npm install
           npm run build
 
-      # 3. CẬP NHẬT PATH: Upload thư mục sau khi build (thường là dist hoặc build)
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v4
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Kiểm tra lại: nếu dùng Vite thì là './dist', nếu là React cũ thì là './build'
-          path: './dist' 
+          # Vite mặc định xuất bản ra thư mục 'dist'
+          path: './dist'
 
       - name: Deploy to GitHub Pages
         id: deployment
